@@ -1,0 +1,18 @@
+export const START_FETCHING_SUMMARY =
+  "features/SummaryAll/START_FETCHING_SUMMARY";
+export const ERROR_FETCHING_SUMMARY =
+  "features/SummaryAll/ERROR_FETCHING_SUMMARY";
+export const SUCCESS_FETCHING_SUMMARY =
+  "features/SummaryAll/SUCCESS_FETCHING_SUMMARY";
+export const START_FETCHING_COUNTRY =
+  "features/SummaryAll/START_FETCHING_COUNTRY";
+export const ERROR_FETCHING_COUNTRY =
+  "features/SummaryAll/ERROR_FETCHING_COUNTRY";
+export const SUCCESS_FETCHING_COUNTRY =
+  "features/SummaryAll/SUCCESS_FETCHING_COUNTRY";
+export const START_FETCHING_COUNTRY_SINGLE =
+  "features/SummaryAll/START_FETCHING_COUNTRY_SINGLE";
+export const ERROR_FETCHING_COUNTRY_SINGLE =
+  "features/SummaryAll/ERROR_FETCHING_COUNTRY_SINGLE";
+export const SUCCESS_FETCHING_COUNTRY_SINGLE =
+  "features/SummaryAll/SUCCESS_FETCHING_COUNTRY_SINGLE";
