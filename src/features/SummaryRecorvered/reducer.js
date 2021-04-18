@@ -2,6 +2,7 @@ import {
   START_FETCHING_SUMMARY_RECORVERED,
   ERROR_FETCHING_SUMMARY_RECORVERED,
   SUCCESS_FETCHING_SUMMARY_RECORVERED,
+  SET_OFFSET,
 } from "./constant";
 
 const statuslist = {
@@ -12,8 +13,12 @@ const statuslist = {
 };
 
 const initialState = {
-  data: [],
+  dataForPagination: [],
   status: statuslist.idle,
+  pages: 0,
+  perPage: 5,
+  offset: 0,
+  dataAll: [],
 };
 
 export default function reducer(state = initialState, action) {
@@ -22,10 +27,19 @@ export default function reducer(state = initialState, action) {
       return { ...state, status: statuslist.process };
 
     case SUCCESS_FETCHING_SUMMARY_RECORVERED:
-      return { ...state, status: statuslist.success, data: action.data };
+      return {
+        ...state,
+        status: statuslist.success,
+        dataForPagination: action.recorvered,
+        pages: action.pages,
+        dataAll: action.data,
+      };
 
     case ERROR_FETCHING_SUMMARY_RECORVERED:
       return { ...state, status: statuslist.error };
+
+    case SET_OFFSET:
+      return { ...state, offset: action.offset };
 
     default:
       return state;

@@ -2,6 +2,7 @@ import {
   START_FETCHING_DAILY,
   ERROR_FETCHING_DAILY,
   SUCCESS_FETCHING_DAILY,
+  SET_OFFSET,
 } from "./constant";
 
 // function from api
@@ -12,9 +13,14 @@ export const fetchDaily = (date) => {
     dispatch(startDaily());
 
     try {
+      let offset = getState().daily.offset || 0;
+      let perPage = getState().daily.perPage || 0;
       let { data } = await getSingleDaily(date);
-      dispatch(successDaily(data));
+      const slice = data.slice(offset, offset + perPage);
+      let pages = Math.ceil(data.length / perPage);
+      dispatch(successDaily({ daily: slice, pages }));
     } catch (error) {
+      console.log(error);
       dispatch(errorDaily());
     }
   };
@@ -30,9 +36,17 @@ export const errorDaily = () => {
     type: ERROR_FETCHING_DAILY,
   };
 };
-export const successDaily = (data) => {
+export const successDaily = ({ daily, pages }) => {
   return {
     type: SUCCESS_FETCHING_DAILY,
-    data,
+    daily,
+    pages,
+  };
+};
+
+export const setOffset = (offset) => {
+  return {
+    type: SET_OFFSET,
+    offset,
   };
 };

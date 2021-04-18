@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSummaryConfirmed } from "../../features/SummaryConfirmed/action";
+import {
+  fetchSummaryConfirmed,
+  setOffset,
+} from "../../features/SummaryConfirmed/action";
 import "./style.css";
 import ReactPaginate from "react-paginate";
 import { ClipLoader } from "react-spinners";
@@ -11,46 +14,10 @@ export default function DetailConfrimed() {
   //   DC = Detail Confirmed
   let dataSummaryDC = useSelector((state) => state.confirmed);
 
-  const [offset, setOffset] = useState(0);
-  const [items, setItems] = useState([]);
-  const [perPage] = useState(5);
-  const [pageCount, setPageCount] = useState(200);
-
-  const getData = () => {
-    let item = dataSummaryDC.data;
-    const slice = item.slice(offset, offset + perPage);
-    const postData = slice.map((pd, key) => (
-      <tr className="hover:bg-gray-50 duration-100 cursor-pointer">
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {key + 1}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.countryRegion}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.confirmed}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.recovered}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.deaths}
-        </td>
-      </tr>
-    ));
-    setItems(postData);
-    setPageCount(Math.ceil(item.length / perPage));
-  };
-  const handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    setOffset(selectedPage + 1);
-  };
-
   React.useEffect(() => {
     // dispatch from action
     dispatch(fetchSummaryConfirmed());
-    getData();
-  }, [offset]);
+  }, [dispatch, dataSummaryDC.offset]);
   return (
     <div>
       <h1 className="text-2xl xl:text-4xl font-semibold text-gray-600">
@@ -104,7 +71,27 @@ export default function DetailConfrimed() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {dataSummaryDC.status === "success" ? (
-                        items
+                        dataSummaryDC.dataForPagination.map((pd, key) => {
+                          return (
+                            <tr className="hover:bg-gray-50 duration-100 cursor-pointer">
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {key + 1}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.countryRegion}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.confirmed}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.recovered}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.deaths}
+                              </td>
+                            </tr>
+                          );
+                        })
                       ) : (
                         <tr>
                           <td colSpan="5" style={{ textAlignLast: "center" }}>
@@ -118,7 +105,9 @@ export default function DetailConfrimed() {
                 <p className="mt-2 text-xs text-gray-500 font-semibold pl-2">
                   Data terbaru{" "}
                   {dataSummaryDC.status === "success"
-                    ? moment(dataSummaryDC.data.lastUpdate).format("DD-MM-YYYY")
+                    ? moment(dataSummaryDC.dataAll.lastUpdate).format(
+                        "DD-MM-YYYY"
+                      )
                     : ""}
                 </p>
                 <div className="w-full flex items-center">
@@ -127,10 +116,12 @@ export default function DetailConfrimed() {
                     nextLabel={"next"}
                     breakLabel={"..."}
                     breakClassName={"break-me"}
-                    pageCount={pageCount}
+                    pageCount={dataSummaryDC.pages}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={5}
-                    onPageChange={handlePageClick}
+                    onPageChange={(page) =>
+                      dispatch(setOffset(page.selected + 1))
+                    }
                     containerClassName={"pagination"}
                     subContainerClassName={"pages pagination"}
                     activeClassName={"active"}
@@ -148,7 +139,7 @@ export default function DetailConfrimed() {
           </h1>
 
           <div className="grid grid-cols-10 gap-2 h-52 rotate-180 transform">
-            {dataSummaryDC.data.slice(0, 10).map((items) => {
+            {dataSummaryDC.dataAll.slice(0, 10).map((items) => {
               let target = 6203965;
               let data = items.confirmed;
               var hasil = ((data / target) * 100).toFixed(1);
@@ -169,7 +160,7 @@ export default function DetailConfrimed() {
             <p className="mt-5 font-semibold text-base">Jiwa</p>
           </div>
           <ul className="mt-3">
-            {dataSummaryDC.data.slice(0, 10).map((items) => {
+            {dataSummaryDC.dataAll.slice(0, 10).map((items) => {
               return (
                 <li className="flex w-full justify-between border-b border-white pb-1 border-opacity-20 text-xs">
                   <p>{items.countryRegion}</p>

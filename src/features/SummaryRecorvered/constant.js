@@ -4,3 +4,5 @@ export const ERROR_FETCHING_SUMMARY_RECORVERED =
   "features/SummaryRecorvered/ERROR_FETCHING_SUMMARY_RECORVERED";
 export const SUCCESS_FETCHING_SUMMARY_RECORVERED =
   "features/SummaryRecorvered/SUCCESS_FETCHING_SUMMARY_RECORVERED";
+
+export const SET_OFFSET = "features/SummaryRecorvered/SET_OFFSET";

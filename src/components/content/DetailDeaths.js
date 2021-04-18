@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSummaryDeaths } from "../../features/SummaryDeaths/action";
+import {
+  fetchSummaryDeaths,
+  setOffset,
+} from "../../features/SummaryDeaths/action";
 import "./style.css";
 import ReactPaginate from "react-paginate";
 import { ClipLoader } from "react-spinners";
@@ -10,46 +13,10 @@ export default function DetailConfrimed() {
   //   DD = Detail Deaths
   let dataSummaryDD = useSelector((state) => state.deaths);
 
-  const [offset, setOffset] = useState(0);
-  const [items, setItems] = useState([]);
-  const [perPage] = useState(5);
-  const [pageCount, setPageCount] = useState(200);
-
-  const getData = () => {
-    let item = dataSummaryDD.data;
-    const slice = item.slice(offset, offset + perPage);
-    const postData = slice.map((pd, key) => (
-      <tr className="hover:bg-gray-50 duration-100 cursor-pointer">
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {key + 1}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.countryRegion}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.deaths}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.recovered}
-        </td>
-        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          {pd.confirmed}
-        </td>
-      </tr>
-    ));
-    setItems(postData);
-    setPageCount(Math.ceil(item.length / perPage));
-  };
-  const handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    setOffset(selectedPage + 1);
-  };
-
   React.useEffect(() => {
     // dispatch from action
     dispatch(fetchSummaryDeaths());
-    getData();
-  }, [offset]);
+  }, [dispatch, dataSummaryDD.offset]);
   return (
     <div>
       <h1 className="text-2xl xl:text-4xl font-semibold text-gray-600">
@@ -103,7 +70,27 @@ export default function DetailConfrimed() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {dataSummaryDD.status === "success" ? (
-                        items
+                        dataSummaryDD.dataForPagination.map((pd, key) => {
+                          return (
+                            <tr className="hover:bg-gray-50 duration-100 cursor-pointer">
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {key + 1}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.countryRegion}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.deaths}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.recovered}
+                              </td>
+                              <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {pd.confirmed}
+                              </td>
+                            </tr>
+                          );
+                        })
                       ) : (
                         <tr>
                           <td colSpan="5" style={{ textAlignLast: "center" }}>
@@ -117,7 +104,9 @@ export default function DetailConfrimed() {
                 <p className="mt-2 text-xs text-gray-500 font-semibold pl-2">
                   Data terbaru{" "}
                   {dataSummaryDD.status === "success"
-                    ? moment(dataSummaryDD.data.lastUpdate).format("DD-MM-YYYY")
+                    ? moment(dataSummaryDD.dataAll.lastUpdate).format(
+                        "DD-MM-YYYY"
+                      )
                     : ""}
                 </p>
                 <div className="w-full flex items-center">
@@ -126,10 +115,12 @@ export default function DetailConfrimed() {
                     nextLabel={"next"}
                     breakLabel={"..."}
                     breakClassName={"break-me"}
-                    pageCount={pageCount}
+                    pageCount={dataSummaryDD.pages}
                     marginPagesDisplayed={2}
                     pageRangeDisplayed={5}
-                    onPageChange={handlePageClick}
+                    onPageChange={(page) =>
+                      dispatch(setOffset(page.selected + 1))
+                    }
                     containerClassName={"pagination"}
                     subContainerClassName={"pages pagination"}
                     activeClassName={"active"}
@@ -141,12 +132,12 @@ export default function DetailConfrimed() {
         </div>
         <div className="col-span-12 xl:col-span-4 bg-blue-500 shadow-md border text-white p-2">
           <h1>Data statistik</h1>
-          <p className="text-3xl font-bold">5 Teratas</p>
+          <p className="text-3xl font-bold">10 Teratas</p>
           <h1 className="text-sm font-semibold mt-3 border-b border-gray-300">
             Global data
           </h1>
           <div className="grid grid-cols-10 gap-2 h-52 rotate-180 transform">
-            {dataSummaryDD.data.slice(0, 10).map((items) => {
+            {dataSummaryDD.dataAll.slice(0, 10).map((items) => {
               let target = 221794;
               let data = items.deaths;
               var hasil = ((data / target) * 100).toFixed(1);
@@ -167,7 +158,7 @@ export default function DetailConfrimed() {
             <p className="mt-5 font-semibold text-base">Jiwa</p>
           </div>
           <ul className="mt-3">
-            {dataSummaryDD.data.slice(0, 10).map((items) => {
+            {dataSummaryDD.dataAll.slice(0, 10).map((items) => {
               return (
                 <li className="flex w-full justify-between border-b border-white pb-1 border-opacity-20 text-xs">
                   <p>{items.countryRegion}</p>

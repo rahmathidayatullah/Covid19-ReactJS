@@ -2,6 +2,7 @@ import {
   START_FETCHING_SUMMARY_DEATHS,
   ERROR_FETCHING_SUMMARY_DEATHS,
   SUCCESS_FETCHING_SUMMARY_DEATHS,
+  SET_OFFSET,
 } from "./constant";
 
 // function from api
@@ -12,8 +13,12 @@ export const fetchSummaryDeaths = () => {
     dispatch(startSummaryDeaths());
 
     try {
+      let offset = getState().deaths.offset || 0;
+      let perPage = getState().deaths.perPage || 0;
       let { data } = await getDeathsSummary();
-      dispatch(successSummaryDeaths(data));
+      const slice = data.slice(offset, offset + perPage);
+      let pages = Math.ceil(data.length / perPage);
+      dispatch(successSummaryDeaths({ deaths: slice, pages, data }));
     } catch (error) {
       dispatch(errorSummaryDeaths());
     }
@@ -30,9 +35,19 @@ export const errorSummaryDeaths = () => {
     type: ERROR_FETCHING_SUMMARY_DEATHS,
   };
 };
-export const successSummaryDeaths = (data) => {
+
+export const successSummaryDeaths = ({ deaths, pages, data }) => {
   return {
     type: SUCCESS_FETCHING_SUMMARY_DEATHS,
+    deaths,
+    pages,
     data,
+  };
+};
+
+export const setOffset = (offset) => {
+  return {
+    type: SET_OFFSET,
+    offset,
   };
 };

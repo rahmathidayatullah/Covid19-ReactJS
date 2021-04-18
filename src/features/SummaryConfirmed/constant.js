@@ -4,3 +4,5 @@ export const ERROR_FETCHING_SUMMARY_CONFIRMED =
   "features/SummaryConfirmed/ERROR_FETCHING_SUMMARY_CONFIRMED";
 export const SUCCESS_FETCHING_SUMMARY_CONFIRMED =
   "features/SummaryConfirmed/SUCCESS_FETCHING_SUMMARY_CONFIRMED";
+
+export const SET_OFFSET = "features/SummaryConfirmed/SET_OFFSET";

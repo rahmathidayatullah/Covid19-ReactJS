@@ -2,29 +2,29 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
 import ReactPaginate from "react-paginate";
-import { ClipLoader } from "react-spinners";
 import moment from "moment";
-import { fetchDaily } from "../../features/Daily/action";
+import { fetchDaily, setOffset } from "../../features/Daily/action";
+import DatePicker from "react-datepicker";
 
 export default function DailyByDate() {
   let dispatch = useDispatch();
   let dataDailyByDate = useSelector((state) => state.daily);
 
   //   state value date
-  const [valueDate, setValueDate] = useState();
+  const [valueDate, setValueDate] = useState(new Date());
+  const [filterDate, setFilterDate] = useState(new Date());
 
-  //   state date now
-  const [dateUse, setDateUse] = useState(moment().format("01-MM-YYYY"));
   //   handle change date input
   const handleChangeDate = (e) => {
-    let date = moment(e.target.value).format("DD-MM-YYYY");
-    setDateUse(date);
+    let date = moment(e).format("MM-DD-YYYY");
+    setValueDate(e);
+    setFilterDate(date);
   };
 
   React.useEffect(() => {
     // dispatch from action
-    dispatch(fetchDaily(dateUse));
-  }, [dateUse]);
+    dispatch(fetchDaily(filterDate));
+  }, [filterDate, dataDailyByDate.offset]);
   return (
     <div>
       <h1 className="text-2xl xl:text-4xl font-semibold text-gray-600">
@@ -33,16 +33,17 @@ export default function DailyByDate() {
 
       <div className="grid grid-cols-12 gap-10 mt-8">
         <div className="col-span-12 bg-white shadow-md border p-2">
-          <div className="flex w-full justify-between items-center">
+          <div className="flex w-full items-center justify-between">
             <h1 className="py-4 text-xl text-gray-600 font-semibold whitespace-nowrap mr-5">
               Detail harian berdasarkan tanggal
             </h1>
-            <input
-              type="date"
-              className="border cursor-pointer px-2 py-1 rounded-lg focus:outline-none"
-              value={valueDate}
-              onChange={(e) => handleChangeDate(e)}
-            />
+            <div className="relative right-8">
+              <DatePicker
+                selected={valueDate}
+                onChange={(e) => handleChangeDate(e)}
+                className="border focus:outline-none cursor-pointer px-2 py-1 transform-none rounded-md"
+              />
+            </div>
           </div>
 
           <div className="flex flex-col mt-4">
@@ -121,12 +122,29 @@ export default function DailyByDate() {
                       ) : (
                         <tr>
                           <td colSpan="5" style={{ textAlignLast: "center" }}>
-                            <ClipLoader />
+                            data tidak ditemukan
                           </td>
                         </tr>
                       )}
                     </tbody>
                   </table>
+                </div>
+                <div className="w-full flex items-center">
+                  <ReactPaginate
+                    previousLabel={"prev"}
+                    nextLabel={"next"}
+                    breakLabel={"..."}
+                    breakClassName={"break-me"}
+                    pageCount={dataDailyByDate.pages}
+                    marginPagesDisplayed={2}
+                    pageRangeDisplayed={5}
+                    onPageChange={(page) =>
+                      dispatch(setOffset(page.selected + 1))
+                    }
+                    containerClassName={"pagination"}
+                    subContainerClassName={"pages pagination"}
+                    activeClassName={"active"}
+                  />
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@ import {
   START_FETCHING_DAILY,
   ERROR_FETCHING_DAILY,
   SUCCESS_FETCHING_DAILY,
+  SET_OFFSET,
 } from "./constant";
 
 const statuslist = {
@@ -14,6 +15,9 @@ const statuslist = {
 const initialState = {
   data: [],
   status: statuslist.idle,
+  pages: 0,
+  perPage: 10,
+  offset: 0,
 };
 
 export default function reducer(state = initialState, action) {
@@ -23,10 +27,18 @@ export default function reducer(state = initialState, action) {
       return { ...state, status: statuslist.process };
 
     case SUCCESS_FETCHING_DAILY:
-      return { ...state, status: statuslist.success, data: action.data };
+      return {
+        ...state,
+        status: statuslist.success,
+        data: action.daily,
+        pages: action.pages,
+      };
 
     case ERROR_FETCHING_DAILY:
-      return { ...state, status: statuslist.error };
+      return { ...state, status: statuslist.error, pages: 0 };
+
+    case SET_OFFSET:
+      return { ...state, offset: action.offset };
 
     default:
       return state;

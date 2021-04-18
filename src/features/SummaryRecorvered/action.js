@@ -2,6 +2,7 @@ import {
   START_FETCHING_SUMMARY_RECORVERED,
   ERROR_FETCHING_SUMMARY_RECORVERED,
   SUCCESS_FETCHING_SUMMARY_RECORVERED,
+  SET_OFFSET,
 } from "./constant";
 
 // function from api
@@ -12,8 +13,13 @@ export const fetchSummaryRecorvered = () => {
     dispatch(startSummaryRecorvered());
 
     try {
+      let offset = getState().recorvered.offset || 0;
+      let perPage = getState().recorvered.perPage || 0;
       let { data } = await getRecorveredSummary();
-      dispatch(successSummaryRecorvered(data));
+      const slice = data.slice(offset, offset + perPage);
+      let pages = Math.ceil(data.length / perPage);
+
+      dispatch(successSummaryRecorvered({ recorvered: slice, pages, data }));
     } catch (error) {
       dispatch(errorSummaryRecorvered());
     }
@@ -30,9 +36,18 @@ export const errorSummaryRecorvered = () => {
     type: ERROR_FETCHING_SUMMARY_RECORVERED,
   };
 };
-export const successSummaryRecorvered = (data) => {
+export const successSummaryRecorvered = ({ recorvered, pages, data }) => {
   return {
     type: SUCCESS_FETCHING_SUMMARY_RECORVERED,
+    recorvered,
+    pages,
     data,
+  };
+};
+
+export const setOffset = (offset) => {
+  return {
+    type: SET_OFFSET,
+    offset,
   };
 };
