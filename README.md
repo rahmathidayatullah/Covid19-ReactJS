@@ -1,4 +1,4 @@
-# MINI PROJECT
+# SIMPLE PROJECT
 
 > Covid 19 Project
 
@@ -35,7 +35,7 @@
 ```bash
 # with npm
 $ npm install
-
+```
 ## Screenshot
 
    Data global <br />
