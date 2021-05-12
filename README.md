@@ -13,7 +13,7 @@
 ## Table of contents
 - [COVID19 PROJECT](#-mini-project)
   - [Table of contents](#table-of-contents)
-  - [Tasks](#get and sortir-data)
+  - [Tasks](#get-and-sortir-data)
   - [Stacks](#stacks)
   - [Build Setup](#build-setup)
   - [Screenshot](#Screenshot)
