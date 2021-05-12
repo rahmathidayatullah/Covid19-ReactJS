@@ -16,8 +16,9 @@ export default function Index({ onClick }) {
       </div>
       {/* image brand */}
       <img
-        className="relative left-1/2 transform -translate-x-1/2 md:transform-none md:static w-20 h-10"
-        src={IconBrand}
+        className="relative left-1/2 transform -translate-x-1/2 md:transform-none md:static w-auto h-10"
+        // src={IconBrand}
+        src="https://files-id.codemi.co.id/files/learning/image/68c3ec1a6c5d155d748cde836d0289cb"
       />
       {/* list header */}
       <ul className="flex items-center">
@@ -25,11 +26,11 @@ export default function Index({ onClick }) {
           <IconNotif />
         </li>
         <li
-          className="flex items-center relative cursor-pointer"
+          className="flex items-center relative cursor-pointer hover:bg-gray-50 rounded-lg duration-200"
           onClick={() => (show === false ? setShow(true) : setShow(false))}
         >
           {/* icon profile */}
-          <div className="w-6 h-6 rounded-full border mr-3"></div>
+          <div className="w-6 h-6 rounded-full border-2 mr-3 hover:bg-gray-50"></div>
           {/* icon arrow */}
           <IconArrow />
           {/* list item arrow */}
@@ -38,7 +39,7 @@ export default function Index({ onClick }) {
           ) : (
             <ul className="absolute right-0 top-10 border rounded-md whitespace-nowrap">
               <li className="hover:bg-gray-200 duration-500 cursor-pointer pl-2 pr-10 py-1 text-sm">
-                Nama Akun
+                Tidak ada dari api
               </li>
               <li className="hover:bg-gray-200 duration-500 cursor-pointer pl-2 pr-10 py-1 text-sm">
                 Logout
